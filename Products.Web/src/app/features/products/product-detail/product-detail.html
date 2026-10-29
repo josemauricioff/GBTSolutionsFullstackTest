@@ -1,0 +1,116 @@
+<a class="back-link" routerLink="/products" queryParamsHandling="preserve">← Back to products</a>
+@if (loading()) {
+  <div class="panel state-message" role="status">Loading product…</div>
+} @else if (error()) {
+  <div class="panel state-message" role="alert">
+    <h2>Product unavailable</h2>
+    <p>{{ error() }}</p>
+    <a class="button secondary" routerLink="/products" queryParamsHandling="preserve"
+      >Back to products</a
+    >
+  </div>
+} @else if (product(); as current) {
+  <section class="page-heading">
+    <div>
+      <div class="eyebrow">PRODUCT #{{ current.id }}</div>
+      <h1>{{ current.name }}</h1>
+      <p>Product details and stock management.</p>
+    </div>
+    <a
+      class="button secondary"
+      [routerLink]="['/products', current.id, 'edit']"
+      queryParamsHandling="preserve"
+      >Edit product</a
+    >
+  </section>
+  @if (success()) {
+    <div class="alert success" role="status">{{ success() }}</div>
+  }
+  @if (stockError()) {
+    <div class="alert error" role="alert">{{ stockError() }}</div>
+  }
+  <div class="detail-layout">
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Product overview</h2>
+        <button class="button subtle" type="button" [disabled]="busy()" (click)="refresh()">
+          ↻ Refresh
+        </button>
+      </div>
+      <dl class="product-facts">
+        <div>
+          <dt>Product ID</dt>
+          <dd>#{{ current.id }}</dd>
+        </div>
+        <div>
+          <dt>Product name</dt>
+          <dd>{{ current.name }}</dd>
+        </div>
+        <div>
+          <dt>Unit price</dt>
+          <dd>{{ current.price | number: '1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt>Available stock</dt>
+          <dd>
+            <span class="stock-badge" [class.empty-stock]="current.stock === 0"
+              >{{ current.stock | number }} units</span
+            >
+          </dd>
+        </div>
+      </dl>
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><h2>Adjust stock</h2></div>
+      <form
+        class="stock-form"
+        [formGroup]="stockForm"
+        (ngSubmit)="changeStock('increase')"
+        [attr.aria-busy]="busy()"
+      >
+        <p>Add incoming units or remove units from the available stock.</p>
+        <div class="field">
+          <label for="stock-quantity">Quantity</label
+          ><input
+            id="stock-quantity"
+            type="number"
+            min="1"
+            max="2147483647"
+            step="1"
+            formControlName="quantity"
+            [attr.aria-invalid]="stockForm.invalid && stockForm.touched"
+            aria-describedby="quantity-help"
+          />
+          <p id="quantity-help" class="field-error">
+            @if (stockForm.invalid && stockForm.touched) {
+              Enter a positive whole number, at most 2147483647.
+            }
+          </p>
+        </div>
+        <div class="stock-actions">
+          <button class="button primary" type="submit" [disabled]="busy()">＋ Add stock</button
+          ><button
+            class="button secondary"
+            type="button"
+            [disabled]="busy()"
+            (click)="changeStock('decrease')"
+          >
+            − Remove stock
+          </button>
+        </div>
+        @if (busy()) {
+          <p role="status">Saving changes…</p>
+        }
+      </form>
+    </section>
+  </div>
+  <section class="delete-section">
+    <div>
+      <h2>Delete product</h2>
+      <p>Permanently remove this product from the inventory.</p>
+    </div>
+    <button class="button danger" type="button" [disabled]="busy()" (click)="deleteProduct()">
+      Delete product
+    </button>
+  </section>
+}

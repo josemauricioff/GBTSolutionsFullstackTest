@@ -1,0 +1,79 @@
+.app-header {
+  background: #fff;
+  border-bottom: 1px solid #e1e7ef;
+}
+.header-content {
+  max-width: 1240px;
+  margin: auto;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 54px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #152842;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 17px;
+}
+.brand small {
+  display: block;
+  color: #69798c;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+.brand-mark {
+  background: #174fa9;
+  color: #fff;
+  border-radius: 9px;
+  padding: 13px 8px;
+  font-size: 14px;
+  letter-spacing: -0.04em;
+}
+nav a {
+  text-decoration: none;
+  color: #526176;
+  padding: 11px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+nav a.active {
+  background: #edf3fe;
+  color: #174fa9;
+  font-weight: 650;
+}
+.header-caption {
+  margin-left: auto;
+  color: #768397;
+  font-size: 12px;
+}
+.workspace {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px 28px 64px;
+  min-height: calc(100vh - 150px);
+}
+.app-footer {
+  color: #8490a2;
+  text-align: center;
+  font-size: 12px;
+  padding: 22px;
+}
+@media (max-width: 640px) {
+  .header-content {
+    gap: 12px;
+    padding: 14px 16px;
+    justify-content: space-between;
+  }
+  .header-caption {
+    display: none;
+  }
+  .workspace {
+    padding: 24px 16px 40px;
+  }
+}

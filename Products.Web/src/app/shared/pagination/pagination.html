@@ -1,0 +1,65 @@
+<div class="pagination-footer">
+  <p aria-live="polite">
+    Showing <strong>{{ firstItem() }}–{{ lastItem() }}</strong> of
+    <strong>{{ totalCount() }}</strong> products
+  </p>
+  <div class="pagination-options">
+    <label for="page-size">Rows per page</label>
+    <select
+      id="page-size"
+      [value]="pageSize()"
+      [disabled]="disabled()"
+      (change)="changeSize($event)"
+    >
+      <option [value]="10">10</option>
+      <option [value]="25">25</option>
+      <option [value]="50">50</option>
+    </select>
+    <nav aria-label="Product pagination">
+      <button
+        type="button"
+        aria-label="First page"
+        [disabled]="disabled() || page() <= 1"
+        (click)="pageChange.emit(1)"
+      >
+        «
+      </button>
+      <button
+        type="button"
+        aria-label="Previous page"
+        [disabled]="disabled() || page() <= 1"
+        (click)="pageChange.emit(page() - 1)"
+      >
+        ‹
+      </button>
+      @for (number of pages(); track number) {
+        <button
+          type="button"
+          [class.current]="number === page()"
+          [attr.aria-current]="number === page() ? 'page' : null"
+          [attr.aria-label]="'Page ' + number"
+          [disabled]="disabled()"
+          (click)="pageChange.emit(number)"
+        >
+          {{ number }}
+        </button>
+      }
+      <button
+        type="button"
+        aria-label="Next page"
+        [disabled]="disabled() || page() >= totalPages()"
+        (click)="pageChange.emit(page() + 1)"
+      >
+        ›
+      </button>
+      <button
+        type="button"
+        aria-label="Last page"
+        [disabled]="disabled() || page() >= totalPages()"
+        (click)="pageChange.emit(totalPages())"
+      >
+        »
+      </button>
+    </nav>
+  </div>
+</div>

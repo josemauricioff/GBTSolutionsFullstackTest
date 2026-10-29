@@ -1,0 +1,164 @@
+<div class="breadcrumb">Inventory <span>/</span> Products</div>
+<section class="page-heading">
+  <div>
+    <h1>Product inventory</h1>
+    <p>Manage your catalog and keep stock accurate.</p>
+  </div>
+  <a class="button primary" routerLink="/products/new" queryParamsHandling="preserve"
+    ><span aria-hidden="true">＋</span> Add product</a
+  >
+</section>
+<section class="panel inventory-panel" aria-label="Product catalog" [attr.aria-busy]="loading()">
+  <div class="panel-heading">
+    <h2>
+      All products <span class="count-badge">{{ result().totalCount }}</span>
+    </h2>
+    <button class="button subtle" type="button" [disabled]="loading()" (click)="refresh()">
+      ↻ Refresh
+    </button>
+  </div>
+  <form class="filter-bar" [formGroup]="filters" (ngSubmit)="applyFilters()">
+    <div class="field search-field">
+      <label for="search-name">Search products</label
+      ><input
+        id="search-name"
+        type="search"
+        formControlName="name"
+        placeholder="Search by product name"
+      />
+    </div>
+    <div class="field">
+      <label for="min-stock">Min. stock</label
+      ><input
+        id="min-stock"
+        type="number"
+        formControlName="min"
+        min="0"
+        max="2147483647"
+        step="1"
+        placeholder="Any"
+      />
+    </div>
+    <div class="field">
+      <label for="max-stock">Max. stock</label
+      ><input
+        id="max-stock"
+        type="number"
+        formControlName="max"
+        min="0"
+        max="2147483647"
+        step="1"
+        placeholder="Any"
+      />
+    </div>
+    <button class="button secondary" type="submit" [disabled]="loading()">Apply filters</button>
+    <button class="button subtle" type="button" [disabled]="loading()" (click)="clearFilters()">
+      Clear
+    </button>
+    @if (filters.invalid && filters.touched) {
+      <p class="field-error filter-error" role="alert">
+        Use whole, non-negative stock limits. Maximum must be at least minimum.
+      </p>
+    }
+  </form>
+  @if (error()) {
+    <div class="state-message" role="alert">
+      <h3>We could not load the products</h3>
+      <p>{{ error() }}</p>
+      <button class="button secondary" type="button" (click)="refresh()">Try again</button>
+    </div>
+  } @else if (loading()) {
+    <div class="state-message" role="status">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Loading products…</p>
+    </div>
+  } @else if (result().items.length === 0) {
+    <div class="state-message">
+      <div class="empty-icon" aria-hidden="true">▦</div>
+      <h3>No products found</h3>
+      <p>Try another search or add your first product.</p>
+      <a class="button secondary" routerLink="/products/new" queryParamsHandling="preserve"
+        >Add product</a
+      >
+    </div>
+  } @else {
+    <p class="mobile-table-hint">Scroll the table horizontally to see stock and actions.</p>
+    <div class="table-scroll">
+      <table>
+        <caption class="sr-only">
+          Products on page
+          {{
+            result().page
+          }}
+          of
+          {{
+            result().totalPages
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Product ID</th>
+            <th scope="col" class="number-column">Unit price</th>
+            <th scope="col" class="number-column">Available stock</th>
+            <th scope="col" class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of result().items; track product.id) {
+            <tr>
+              <td>
+                <a
+                  class="product-name"
+                  [routerLink]="['/products', product.id]"
+                  queryParamsHandling="preserve"
+                  ><span class="product-avatar" aria-hidden="true">{{
+                    product.name.slice(0, 1).toUpperCase()
+                  }}</span
+                  >{{ product.name }}</a
+                >
+              </td>
+              <td>
+                <span class="identifier">#{{ product.id }}</span>
+              </td>
+              <td class="number-column">{{ product.price | number: '1.2-2' }}</td>
+              <td class="number-column">
+                <span
+                  class="stock-badge"
+                  [class.empty-stock]="product.stock === 0"
+                  [class.low-stock]="product.stock > 0 && product.stock < 10"
+                  >{{ product.stock | number }} units</span
+                >
+              </td>
+              <td class="row-actions">
+                <a
+                  [routerLink]="['/products', product.id]"
+                  queryParamsHandling="preserve"
+                  [attr.aria-label]="'View ' + product.name"
+                  >View</a
+                ><a
+                  [routerLink]="['/products', product.id, 'edit']"
+                  queryParamsHandling="preserve"
+                  [attr.aria-label]="'Edit ' + product.name"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (!error()) {
+    <app-pagination
+      [page]="result().page"
+      [pageSize]="result().pageSize"
+      [totalCount]="result().totalCount"
+      [totalPages]="result().totalPages"
+      [disabled]="loading()"
+      (pageChange)="changePage($event)"
+      (pageSizeChange)="changePageSize($event)"
+    />
+  }
+</section>
+<p class="page-hint">Stock is shown for every product. Open a product to add or remove units.</p>

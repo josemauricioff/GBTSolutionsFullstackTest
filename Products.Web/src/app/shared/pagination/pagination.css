@@ -1,0 +1,58 @@
+.pagination-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px;
+  border-top: 1px solid #e5eaf1;
+  font-size: 12px;
+  color: #637187;
+}
+p {
+  margin: 0;
+}
+strong {
+  color: #31425a;
+  font-weight: 600;
+}
+.pagination-options,
+nav {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.pagination-options {
+  gap: 12px;
+}
+select {
+  width: 65px;
+  padding: 7px;
+}
+button {
+  min-width: 31px;
+  height: 32px;
+  border: 1px solid #dce3ed;
+  background: white;
+  color: #526176;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button.current {
+  background: #174fa9;
+  color: white;
+  border-color: #174fa9;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+@media (max-width: 760px) {
+  .pagination-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+  .pagination-options {
+    flex-wrap: wrap;
+  }
+}

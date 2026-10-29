@@ -1,0 +1,119 @@
+<a class="back-link" routerLink="/products" queryParamsHandling="preserve">← Back to products</a>
+<section class="page-heading">
+  <div>
+    <h1>{{ id() === null ? 'Add product' : 'Edit product' }}</h1>
+    <p>
+      {{
+        id() === null
+          ? 'Create a new product in your inventory.'
+          : 'Update the product details and available stock.'
+      }}
+    </p>
+  </div>
+</section>
+@if (loading()) {
+  <div class="panel state-message" role="status">Loading product…</div>
+} @else if (loadFailed()) {
+  <div class="panel state-message" role="alert">
+    <h2>Product unavailable</h2>
+    <p>{{ error() }}</p>
+    <a class="button secondary" routerLink="/products" queryParamsHandling="preserve"
+      >Back to products</a
+    >
+  </div>
+} @else {
+  <form
+    class="panel product-form"
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    [attr.aria-busy]="saving()"
+  >
+    <div class="panel-heading">
+      <h2>Product details</h2>
+      @if (id() !== null) {
+        <span class="muted">#{{ id() }}</span>
+      }
+    </div>
+    <div class="form-content">
+      @if (error()) {
+        <div class="alert error" role="alert">{{ error() }}</div>
+      }
+      <div class="field">
+        <label for="product-name">Product name <span class="required">*</span></label
+        ><input
+          id="product-name"
+          formControlName="name"
+          maxlength="200"
+          autocomplete="off"
+          placeholder="e.g. Optical lens"
+          [attr.aria-invalid]="invalid('name')"
+          aria-describedby="name-help"
+        />
+        <p id="name-help" [class.field-error]="invalid('name')">
+          {{
+            invalid('name')
+              ? 'Enter a non-blank name with at most 200 characters.'
+              : 'Use a clear, descriptive product name.'
+          }}
+        </p>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="product-price">Unit price <span class="required">*</span></label
+          ><input
+            id="product-price"
+            type="number"
+            formControlName="price"
+            min="0.01"
+            max="9999999999.99"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="0.00"
+            [attr.aria-invalid]="invalid('price')"
+            aria-describedby="price-help"
+          />
+          <p id="price-help" [class.field-error]="invalid('price')">
+            {{
+              invalid('price')
+                ? 'Use a positive price, at most 9999999999.99, with up to two decimal places.'
+                : 'Enter a positive amount with up to two decimal places.'
+            }}
+          </p>
+        </div>
+        <div class="field">
+          <label for="product-stock">Available stock <span class="required">*</span></label
+          ><input
+            id="product-stock"
+            type="number"
+            formControlName="stock"
+            min="0"
+            max="2147483647"
+            step="1"
+            inputmode="numeric"
+            [attr.aria-invalid]="invalid('stock')"
+            aria-describedby="stock-help"
+          />
+          <p id="stock-help" [class.field-error]="invalid('stock')">
+            {{
+              invalid('stock')
+                ? 'Use a whole number from 0 to 2147483647.'
+                : 'Zero is allowed for products without available stock.'
+            }}
+          </p>
+        </div>
+      </div>
+      @if (id() !== null) {
+        <p class="form-note">
+          Saving replaces the stock total. To add or remove units, use the stock controls on the
+          product details page.
+        </p>
+      }
+    </div>
+    <div class="form-footer">
+      <a class="button secondary" routerLink="/products" queryParamsHandling="preserve">Cancel</a
+      ><button class="button primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : id() === null ? 'Create product' : 'Save changes' }}
+      </button>
+    </div>
+  </form>
+}
